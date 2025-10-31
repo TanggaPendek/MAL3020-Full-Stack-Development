@@ -6,13 +6,12 @@ services:
     container_name: project-frontend
     ports:
       - "5173:5173"
-    working_dir: /app
     volumes:
       - ./frontend:/app
       - /app/node_modules
     environment:
-      - NODE_ENV=development
-    command: npm run dev
+      - VITE_API_URL=http://localhost:5000
+    command: npm run dev -- --host
     depends_on:
       - backend
 
@@ -23,13 +22,12 @@ services:
     container_name: project-backend
     ports:
       - "5000:5000"
-    working_dir: /app
     volumes:
       - ./backend:/app
       - /app/node_modules
     environment:
-      - NODE_ENV=development
-      - MONGO_URI=mongodb://mongo:27017/projectdb
+      - MONGO_URI=mongodb://project-mongo:27017/mal3020
+      - PORT=5000
     command: npm run dev
     depends_on:
       - mongo
@@ -41,9 +39,6 @@ services:
       - "27017:27017"
     volumes:
       - mongo_data:/data/db
-      - ./database/init.js:/docker-entrypoint-initdb.d/init.js:ro
-    environment:
-      - MONGO_INITDB_DATABASE=projectdb
 
 volumes:
   mongo_data:
